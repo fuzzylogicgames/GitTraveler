@@ -2,7 +2,7 @@ import os, sys, subprocess, json, argparse, re
 
 class GitMagicCore(object):
 
-	_appLocalDirectory = os.path.abspath(os.path.dirname(__file__))
+	__appLocalDirectory = os.path.abspath(os.path.dirname(__file__))
 	
 	def __init__(self, cliMode=False):
 		self._cliMode = cliMode
@@ -16,7 +16,7 @@ class GitMagicCore(object):
 		os.chdir(repoPath)
 
 		commits = []
-		tags = self._fetchTagData()
+		tags = self.__fetchTagData()
 
 		cmd = "git log --all --pretty=format:\"%H|||%an|||%ae|||%ai|||%s\" --decorate=full"
 		result = self._runCommand(cmd).split('\n')
@@ -67,13 +67,19 @@ class GitMagicCore(object):
 		# useful for debugging
 		#print(json.dumps(commits))
 
-		os.chdir(self._appLocalDirectory)
+		os.chdir(self.__appLocalDirectory)
 		return commits
 		
-	def LocateCommit(self, hash, message):
-		pass
+	def __applyFilters(self, filters={}):
+		if filters == None:
+			print("No filters defined")
+			sys.exit(1)0
 
-	def _fetchTagData(self):
+		filterTest = {
+			"branch_name":""
+		}
+
+	def __fetchTagData(self):
 		tagData = []
 
 		cmd = "git show-ref --tags"
@@ -123,7 +129,7 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 
 	gm = GitMagicCore(args.cli)
-	result = gm.Walk("D:/Toolbox/GitMagic/testrepo")
+	result = gm.Walk(args.repo)
 	print(result)
 
 	#gm.WalkLogs("D:/Toolbox/GitMagic/testrepo", {"commit":"f290d432f92235cedcf5253de755428eef871ec0"})
