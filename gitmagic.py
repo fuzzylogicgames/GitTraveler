@@ -3,11 +3,16 @@ import os, sys, subprocess, json, argparse, re
 class GitMagicCore(object):
 
 	_appLocalDirectory = os.path.abspath(os.path.dirname(__file__))
+	
+	def __init__(self, cliMode=False):
+		self._cliMode = cliMode
 
-	def __init__(self, repoPath):
-		self._walkLogs(repoPath)
+	# public use methods
+	def Walk(self, repoPath, filters={}, stopCondition={}):
+		return self.__walkLogs(repoPath, filters, stopCondition)
 
-	def _walkLogs(self, repoPath, filters={}, stopCondition={}):
+	# internals
+	def __walkLogs(self, repoPath, filters={}, stopCondition={}):
 		os.chdir(repoPath)
 
 		commits = []
@@ -37,7 +42,6 @@ class GitMagicCore(object):
 			
 			# add tags to collection if connected to this hash and add to commit data
 			for k in range(len(tags)):
-				print(tags[k]['commit_hash']+"===>"+r[0])
 				if tags[k]['commit_hash'] == r[0]:
 					commitData["tags"].append(tags[k])
 			
@@ -66,11 +70,7 @@ class GitMagicCore(object):
 		os.chdir(self._appLocalDirectory)
 		return commits
 		
-
-	def LocateCommit(self):
-		pass
-
-	def DiffAcrossBranches(self):
+	def LocateCommit(self, hash, message):
 		pass
 
 	def _fetchTagData(self):
@@ -90,7 +90,8 @@ class GitMagicCore(object):
 			tagType = self._runCommand(cmd).strip()
 			if tagType == "tag":
 				tagInfoType = "annotated"
-				print("harvest true commit for annotated tag")
+
+				# harvest true commit for annotated tag
 				cmd = "git show-ref -d "+tagresult[i]
 				annotatedTag = self._runCommand(cmd).strip().split('\n')
 				for i in range(len(annotatedTag)):
@@ -116,6 +117,14 @@ class GitMagicCore(object):
 		pass
 
 if __name__ == "__main__":
-	gm = GitMagicCore()
+	parser = argparse.ArgumentParser(description='Process some integers.')
+	parser.add_argument('-r', '--repo', required=True, type=str, help='Repository path')
+	parser.add_argument('-c', '--cli', action="store_true", help='Repository path')
+	args = parser.parse_args()
+
+	gm = GitMagicCore(args.cli)
+	result = gm.Walk("D:/Toolbox/GitMagic/testrepo")
+	print(result)
+
 	#gm.WalkLogs("D:/Toolbox/GitMagic/testrepo", {"commit":"f290d432f92235cedcf5253de755428eef871ec0"})
-	gm.WalkLogs("D:/Toolbox/GitMagic/testrepo", {})
+	#gm.WalkLogs("D:/Toolbox/GitMagic/testrepo", {})
