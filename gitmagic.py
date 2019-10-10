@@ -1,4 +1,4 @@
-import os, sys, subprocess, json, argparse, re
+import os, sys, subprocess, json, argparse, re, datetime
 
 class GitMagicCore(object):
 
@@ -81,23 +81,47 @@ class GitMagicCore(object):
 
 		filters = {
 			"branch":"",
-			"tag":"dev-tag",
+			"tag":"",
+			"tag_present":False,
 			"author":"",
-			"date":"",
-			"message":""
+			"author_email":"",
+			"date":"20190510",
+			"message":"event"
 		}
 
+		# boolean operations
 		if 'branch' in filters and filters['branch'] != "" and filters['branch'] not in dataset['branches']:
 			return False
 
-		if 'tag' in filters and filters['tag'] != "":
-			tagFound = False
-			for i in range(len(dataset['tags'])):
-				if filters['tag'] == dataset['tags'][i]['tag']:
-					tagFound = True
-
-			if not tagFound:
+		if 'tag_present' in filters and filters['tag_present']:
+			if len(dataset['tags']) == 0:
 				return False
+		else:
+			if 'tag' in filters and filters['tag'] != "":
+				tagFound = False
+				for i in range(len(dataset['tags'])):
+					if filters['tag'] == dataset['tags'][i]['tag']:
+						tagFound = True
+
+				if not tagFound:
+					return False
+
+		# compound operations
+		if 'author_email' in filters and filters['author_email'] != "" and filters['author_email'] != dataset['author_email']:
+			return False
+
+		if 'author' in filters and filters['author'] != "" and filters['author'] != dataset['author']:
+			return False
+
+		if 'date' in filters and filters['date'] != "":
+			filterDate = datetime.datetime.strptime(filters['date'], '%Y-%m-%d %H:%M:%S.%f')
+			commitDate = datetime.datetime.strptime(dataset['date'], '%Y-%m-%d %H:%M:%S.%f')
+
+			print(filterDate)
+			print(commitDate)
+
+		if 'message' in filters and filters['message'] != "" and filters['message'] not in dataset['message']:
+			return False
 
 		return True
 
@@ -126,7 +150,7 @@ class GitMagicCore(object):
 					if '^{}' in annotatedTag[i]:
 						hashInfo = annotatedTag[i].split(' ')[0]
 
-			tagData.append({'commit_hash':hashInfo, 'tag':tagInfo.replace('/refs/tags',''), 'ref':tagInfo, 'type':tagInfoType})
+			tagData.append({'commit_hash':hashInfo, 'tag':tagInfo.replace('refs/tags/',''), 'ref':tagInfo, 'type':tagInfoType})
 
 		return tagData
 
