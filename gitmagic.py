@@ -19,7 +19,7 @@ class GitMagicCore(object):
 		tags = self.__fetchTagData()
 
 		cmd = "git log --all --pretty=format:\"%H|||%an|||%ae|||%ai|||%s\" --decorate=full"
-		result = self._runCommand(cmd).split('\n')
+		result = self.__runCommand(cmd).split('\n')
 		for i in range(len(result)):
 			# process stop conditions
 			if 'limit' in stopCondition and i == stopCondition['limit']:
@@ -47,7 +47,7 @@ class GitMagicCore(object):
 			
 			# gather all branches this commit exists on and add to commit data
 			cmd = "git branch --contains "+commitData['hash']
-			branches = self._runCommand(cmd).split('\n')
+			branches = self.__runCommand(cmd).split('\n')
 			if len(branches) > 0:
 				for j in range(len(branches)):
 					b = branches[j].strip()
@@ -62,6 +62,10 @@ class GitMagicCore(object):
 				# no branches attached to this commit
 				commitData['orphan'] = True
 				
+
+			if not self.__applyFilters(commitData):
+				continue
+
 			commits.append(commitData)
 
 		# useful for debugging
@@ -70,20 +74,38 @@ class GitMagicCore(object):
 		os.chdir(self.__appLocalDirectory)
 		return commits
 		
-	def __applyFilters(self, filters={}):
+	def __applyFilters(self, dataset, filters={}):
 		if filters == None:
 			print("No filters defined")
-			sys.exit(1)0
+			sys.exit(1)
 
-		filterTest = {
-			"branch_name":""
+		filters = {
+			"branch":"",
+			"tag":"dev-tag",
+			"author":"",
+			"date":"",
+			"message":""
 		}
+
+		if 'branch' in filters and filters['branch'] != "" and filters['branch'] not in dataset['branches']:
+			return False
+
+		if 'tag' in filters and filters['tag'] != "":
+			tagFound = False
+			for i in range(len(dataset['tags'])):
+				if filters['tag'] == dataset['tags'][i]['tag']:
+					tagFound = True
+
+			if not tagFound:
+				return False
+
+		return True
 
 	def __fetchTagData(self):
 		tagData = []
 
 		cmd = "git show-ref --tags"
-		tagresult = list(filter(None, self._runCommand(cmd).split("\n")))
+		tagresult = list(filter(None, self.__runCommand(cmd).split("\n")))
 		for i in range(len(tagresult)):
 			if tagresult[i] == '{}':
 				continue
@@ -93,22 +115,22 @@ class GitMagicCore(object):
 			hashInfo = tagresult[i].split(" ")[0]
 
 			cmd = "git cat-file -t "+tagInfo
-			tagType = self._runCommand(cmd).strip()
+			tagType = self.__runCommand(cmd).strip()
 			if tagType == "tag":
 				tagInfoType = "annotated"
 
 				# harvest true commit for annotated tag
 				cmd = "git show-ref -d "+tagresult[i]
-				annotatedTag = self._runCommand(cmd).strip().split('\n')
+				annotatedTag = self.__runCommand(cmd).strip().split('\n')
 				for i in range(len(annotatedTag)):
 					if '^{}' in annotatedTag[i]:
 						hashInfo = annotatedTag[i].split(' ')[0]
 
-			tagData.append({'commit_hash':hashInfo, 'tag':tagInfo, 'type':tagInfoType})
+			tagData.append({'commit_hash':hashInfo, 'tag':tagInfo.replace('/refs/tags',''), 'ref':tagInfo, 'type':tagInfoType})
 
 		return tagData
 
-	def _runCommand(self, cmd):
+	def __runCommand(self, cmd):
 		p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 		output = p.communicate()[0]
 
