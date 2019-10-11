@@ -4,15 +4,18 @@ class GitMagicCore(object):
 
 	__appLocalDirectory = os.path.abspath(os.path.dirname(__file__))
 	
-	def __init__(self, cliMode=False):
-		self._cliMode = cliMode
+	def __init__(self):
+		pass
 
 	# public use methods
-	def Walk(self, repoPath, filters={}, stopCondition={}):
+	def Walk(self, repoPath, filters=None, stopCondition=None):
+		filters = self.__argumentParser(filters)
+		stopCondition = self.__argumentParser(stopCondition)
+
 		return self.__walkLogs(repoPath, filters, stopCondition)
 
 	# internals
-	def __walkLogs(self, repoPath, filters={}, stopCondition={}):
+	def __walkLogs(self, repoPath, filters={}, stopCondition=None):
 		os.chdir(repoPath)
 
 		commits = []
@@ -21,14 +24,16 @@ class GitMagicCore(object):
 		cmd = "git log --all --pretty=format:\"%H|||%an|||%ae|||%ai|||%s\" --decorate=full"
 		result = self.__runCommand(cmd).split('\n')
 		for i in range(len(result)):
-			# process stop conditions
-			if 'limit' in stopCondition and i == stopCondition['limit']:
-				break
-
-			if 'commit' in stopCondition and stopCondition['commit'] in r[0]:
-				break
-
 			r = result[i].split("|||")
+
+			# process stop conditions
+			if stopCondition:
+				if 'limit' in stopCondition and i == int(stopCondition['limit']):
+					break
+
+				if 'commit' in stopCondition and stopCondition['commit'] in r[0]:
+					break
+
 			commitData = {
 				"hash":r[0],
 				"message":r[4],
@@ -63,7 +68,7 @@ class GitMagicCore(object):
 				commitData['orphan'] = True
 				
 
-			if not self.__applyFilters(commitData):
+			if not self.__applyFilters(commitData, filters):
 				continue
 
 			commits.append(commitData)
@@ -74,22 +79,22 @@ class GitMagicCore(object):
 		os.chdir(self.__appLocalDirectory)
 		return commits
 		
-	def __applyFilters(self, dataset, filters={}):
-		if filters == None:
-			print("No filters defined")
-			sys.exit(1)
+	def __applyFilters(self, dataset, filters=None):
+		if not filters:
+			return True
 
+		'''
 		filters = {
 			"branch":"",
 			"tag":"",
 			"tag_present":False,
 			"author":"",
 			"author_email":"",
-			"date":"20190510",
-			"message":"event"
+			"date":"2019-06-02 02:15:53 -0700",
+			"message":""
 		}
+		'''
 
-		# boolean operations
 		if 'branch' in filters and filters['branch'] != "" and filters['branch'] not in dataset['branches']:
 			return False
 
@@ -106,21 +111,21 @@ class GitMagicCore(object):
 				if not tagFound:
 					return False
 
-		# compound operations
 		if 'author_email' in filters and filters['author_email'] != "" and filters['author_email'] != dataset['author_email']:
 			return False
 
 		if 'author' in filters and filters['author'] != "" and filters['author'] != dataset['author']:
 			return False
 
+		
 		if 'date' in filters and filters['date'] != "":
-			filterDate = datetime.datetime.strptime(filters['date'], '%Y-%m-%d %H:%M:%S.%f')
-			commitDate = datetime.datetime.strptime(dataset['date'], '%Y-%m-%d %H:%M:%S.%f')
+			filterDate = datetime.datetime.strptime(filters['date'], '%Y-%m-%d %H:%M:%S %z')
+			commitDate = datetime.datetime.strptime(dataset['date'], '%Y-%m-%d %H:%M:%S %z')
 
-			print(filterDate)
-			print(commitDate)
+			if commitDate > filterDate:
+				return False
 
-		if 'message' in filters and filters['message'] != "" and filters['message'] not in dataset['message']:
+		if 'message' in filters and filters['message'] != "" and filters['message'].lower() not in dataset['message'].lower():
 			return False
 
 		return True
@@ -165,18 +170,33 @@ class GitMagicCore(object):
 
 		return output
 
+	def __argumentParser(self, arg):
+		if arg == None:
+			return None
+
+		argOut = {}
+		argList = arg.split(",")
+		for i in range(len(argList)):
+			argKV = argList[i].split("=")
+			argOut[argKV[0]] = argKV[1]
+		return argOut
+
 	def _exportResults(self, diffs=False, commitLogs=False):
 		pass
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description='Process some integers.')
 	parser.add_argument('-r', '--repo', required=True, type=str, help='Repository path')
-	parser.add_argument('-c', '--cli', action="store_true", help='Repository path')
+	parser.add_argument('-f', '--filters', type=str, help='filters to apply to the walk result')
+	parser.add_argument('-s', '--stopcondition', type=str, help='Condition used to limit the number of entries searched')
 	args = parser.parse_args()
 
-	gm = GitMagicCore(args.cli)
-	result = gm.Walk(args.repo)
+	gm = GitMagicCore()
+	result = gm.Walk(args.repo, args.filters, args.stopcondition)
 	print(result)
 
 	#gm.WalkLogs("D:/Toolbox/GitMagic/testrepo", {"commit":"f290d432f92235cedcf5253de755428eef871ec0"})
 	#gm.WalkLogs("D:/Toolbox/GitMagic/testrepo", {})
+
+
+	
