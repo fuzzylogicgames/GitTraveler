@@ -15,7 +15,7 @@ class GitMagicCore(object):
 		return self.__walkLogs(repoPath, filters, stopCondition)
 
 	# internals
-	def __walkLogs(self, repoPath, filters={}, stopCondition=None):
+	def __walkLogs(self, repoPath, filters=None, stopCondition=None):
 		os.chdir(repoPath)
 
 		commits = []
@@ -174,6 +174,9 @@ class GitMagicCore(object):
 		if arg == None:
 			return None
 
+		if type(arg) is dict:
+			return arg
+
 		argOut = {}
 		argList = arg.split(",")
 		for i in range(len(argList)):
@@ -192,7 +195,8 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 
 	gm = GitMagicCore()
-	result = gm.Walk(args.repo, args.filters, args.stopcondition)
+	#result = gm.Walk(args.repo, args.filters, args.stopcondition)
+	result = gm.Walk("D:/UnityProjects/dopewars", {}, {"limit":10})
 	print(result)
 
 	#gm.WalkLogs("D:/Toolbox/GitMagic/testrepo", {"commit":"f290d432f92235cedcf5253de755428eef871ec0"})
