@@ -34,16 +34,7 @@ class GitMagicCore(object):
 				if 'commit' in stopCondition and stopCondition['commit'] in r[0]:
 					break
 
-			commitData = {
-				"hash":r[0],
-				"message":r[4],
-				"date":r[3],
-				"author":r[1],
-				"author_email":r[2],
-				"branches":[],
-				"tags":[],
-				"orphan":False
-			}
+			commitData = {"hash":r[0], "message":r[4], "date":r[3], "author":r[1], "author_email":r[2], "branches":[], "tags":[], "orphan":False}
 			
 			# add tags to collection if connected to this hash and add to commit data
 			for k in range(len(tags)):
@@ -117,7 +108,6 @@ class GitMagicCore(object):
 		if 'author' in filters and filters['author'] != "" and filters['author'] != dataset['author']:
 			return False
 
-		
 		if 'date' in filters and filters['date'] != "":
 			filterDate = datetime.datetime.strptime(filters['date'], '%Y-%m-%d %H:%M:%S %z')
 			commitDate = datetime.datetime.strptime(dataset['date'], '%Y-%m-%d %H:%M:%S %z')
@@ -184,23 +174,19 @@ class GitMagicCore(object):
 			argOut[argKV[0]] = argKV[1]
 		return argOut
 
-	def _exportResults(self, diffs=False, commitLogs=False):
+	def __exportResults(self, diffs=False, commitLogs=False):
 		pass
 
 if __name__ == "__main__":
-	parser = argparse.ArgumentParser(description='Process some integers.')
-	parser.add_argument('-r', '--repo', required=True, type=str, help='Repository path')
-	parser.add_argument('-f', '--filters', type=str, help='filters to apply to the walk result')
+	parser = argparse.ArgumentParser()
+	parser.add_argument('-r', '--repo', required=True, type=str, help='Path to repository')
+	parser.add_argument('-f', '--filters', type=str, help='Filters to apply to the walk result')
 	parser.add_argument('-s', '--stopcondition', type=str, help='Condition used to limit the number of entries searched')
 	args = parser.parse_args()
 
 	gm = GitMagicCore()
-	#result = gm.Walk(args.repo, args.filters, args.stopcondition)
-	result = gm.Walk("D:/UnityProjects/dopewars", {}, {"limit":10})
-	print(result)
-
-	#gm.WalkLogs("D:/Toolbox/GitMagic/testrepo", {"commit":"f290d432f92235cedcf5253de755428eef871ec0"})
-	#gm.WalkLogs("D:/Toolbox/GitMagic/testrepo", {})
+	result = gm.Walk(args.repo, args.filters, args.stopcondition)
+	print(result, flush=True)
 
 
 	
