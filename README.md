@@ -44,7 +44,7 @@ from GitMagic.gitmagic import GitMagicCore
 
 #### Examples
 To fetch entire git log:
-python gitmagic --repo "<path_to_repo>"
+~~~python gitmagic --repo "<path_to_repo>"
 
 To fetch all entries containing the author <author> and the string <message string> in the commit message
 python gitmagic --repo "<path_to_repo>" --filters "author=<author>,message=<message string>"
