@@ -33,7 +33,7 @@ To fetch entire git log:
 python gitmagic --repo "<path_to_repo>"
 
 To fetch all entries containing the author <author> and the string <message string> in the commit message
-~~~python gitmagic --repo "<path_to_repo>" --filters "author=<author>,message=<message string>"~~~
+~~python gitmagic --repo "<path_to_repo>" --filters "author=<author>,message=<message string>"~~
 
 To fetch all entries containing the author <author> and the string <message string> in the commit message, only search 30 entries
 ~~~python gitmagic --repo "<path_to_repo>" --filters "author=<author>,message=<message string>" --stopcondition "limit=30"~~~
