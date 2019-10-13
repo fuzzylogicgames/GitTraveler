@@ -26,17 +26,17 @@ GitMagic runs a series of git commands against any repository and aggrigates tha
 		'orphan': False
 	},
 	{
-    'hash': 'f236fa393a5b1bac51b1667471f542b5e05399f0',
-    'message': 'adding db',
-    'date': '2019-09-06 21:09:25 -0700',
-    'author': 'author',
-    'author_email': 'author@gmail.com',
-    'branches': ['hotfix/bug-1234', 'master'],
-    'tags': [{
-      'commit_hash': 'f236fa393a5b1bac51b1667471f542b5e05399f0',
-      'tag': 'annotated-tag-1.0',
-      'ref': 'refs/tags/annotated-tag-1.0',
-      'type': 'annotated'
+		'hash': 'f236fa393a5b1bac51b1667471f542b5e05399f0',
+		'message': 'adding db',
+		'date': '2019-09-06 21:09:25 -0700',
+		'author': 'author',
+		'author_email': 'author@gmail.com',
+		'branches': ['hotfix/bug-1234', 'master'],
+		'tags': [{
+		'commit_hash': 'f236fa393a5b1bac51b1667471f542b5e05399f0',
+		'tag': 'annotated-tag-1.0',
+		'ref': 'refs/tags/annotated-tag-1.0',
+		'type': 'annotated'
 	}
 ]
 ```
