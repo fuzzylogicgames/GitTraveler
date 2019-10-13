@@ -1,6 +1,50 @@
 # GitMagic
 GitMagic aims to create more useable data when working with git. This allows developers to get more done and run less commands to find the data they need.
 
+GitMagic runs a series of git commands against any repository and aggrigates that branch, tag and commit data into a single JSON formatted array. Sample below:
+
+```
+[
+	{
+		'hash': '76a80296ade0b91729a6687c343d0e415677a63d',
+		'message': "Merge branch 'testbranch' into hotfix/bug2",
+		'date': '2019-09-06 21:26:05 -0700',
+		'author': 'author',
+		'author_email': 'author@gmail.com',
+		'branches': ['hotfix/bug2'],
+		'tags': [{
+			'commit_hash': '76a80296ade0b91729a6687c343d0e415677a63d',
+			'tag': 'dev-tag',
+			'ref': 'refs/tags/dev-tag',
+			'type': 'commit'
+		}, {
+			'commit_hash': '76a80296ade0b91729a6687c343d0e415677a63d',
+			'tag': 'v1.0.0',
+			'ref': 'refs/tags/v1.0.0',
+			'type': 'commit'
+		}],
+		'orphan': False
+	},
+	{
+    'hash': 'f236fa393a5b1bac51b1667471f542b5e05399f0',
+    'message': 'adding db',
+    'date': '2019-09-06 21:09:25 -0700',
+    'author': 'author',
+    'author_email': 'author@gmail.com',
+    'branches': ['hotfix/bug-1234', 'master'],
+    'tags': [{
+      'commit_hash': 'f236fa393a5b1bac51b1667471f542b5e05399f0',
+      'tag': 'annotated-tag-1.0',
+      'ref': 'refs/tags/annotated-tag-1.0',
+      'type': 'annotated'
+	}
+]
+```
+
+The result will contain all tags (annotated and lightweight) on a commit, all branches the commit exists on as well as author, date and message information.
+
+All results are "queryable" with GitMagic's filtering system, every property is a field that can be filtered, allowing you to perform complex searches and only return the data you need.
+
 ## Requirements
 Python 3.X
 
