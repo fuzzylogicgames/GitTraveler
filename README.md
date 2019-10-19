@@ -1,7 +1,7 @@
-# GitMagic
-GitMagic aims to create more useable data when working with git. This allows developers to get more done and run less commands to find the data they need.
+# GitTraveler
+GitTraveler aims to create more useable data when working with git. This allows developers to get more done and run less commands to find the data they need.
 
-GitMagic runs a series of git commands against any repository and aggrigates that branch, tag and commit data into a single JSON formatted array. Sample below:
+GitTraveler runs a series of git commands against any repository and aggrigates that branch, tag and commit data into a single JSON formatted array. Sample below:
 
 ```
 [
@@ -43,17 +43,17 @@ GitMagic runs a series of git commands against any repository and aggrigates tha
 
 The result will contain all tags (annotated and lightweight) on a commit, all branches the commit exists on as well as author, date and message information.
 
-All results are "queryable" with GitMagic's filtering system, every property is a field that can be filtered, allowing you to perform complex searches and only return the data you need.
+All results are "queryable" with GitTraveler's filtering system, every property is a field that can be filtered, allowing you to perform complex searches and only return the data you need.
 
 ## Requirements
 Python 3.X
 
-GitMagic uses native python, no external libraries required.
+GitTraveler uses native python, no external libraries required.
 
-## Using GitMagic
+## Using GitTraveler
 
 #### Filters
-GitMagic provides a variety of filters to tailor your git log results to fit the specific need. CLI filters and stop conditions are comma separated key value pairs.
+GitTraveler provides a variety of filters to tailor your git log results to fit the specific need. CLI filters and stop conditions are comma separated key value pairs.
 
 ##### Available Filters
 - branch (string): Name of branch, all results will only exist on this branch.
@@ -65,7 +65,7 @@ GitMagic provides a variety of filters to tailor your git log results to fit the
 - message (string): Substring match in commit message, all results will contain the word / phrase in this filter
 
 #### Stop Conditions
-GitMagic provides conditions that will stop a search operation, currently supported conditions are limit and commit.
+GitTraveler provides conditions that will stop a search operation, currently supported conditions are limit and commit.
 
 #### Available Stop Conditions
 - limit (int): number of results to list starting from HEAD.
@@ -75,17 +75,17 @@ GitMagic provides conditions that will stop a search operation, currently suppor
 #### Examples
 To fetch entire git log:
 ```
-python gitmagic --repo "<path_to_repo>"
+python GitTraveler --repo "<path_to_repo>"
 ```
 
 To fetch all entries containing the author <author> and the string <message string> in the commit message
 ```
-python gitmagic --repo "<path_to_repo>" --filters "author=<author>,message=<message string>"
+python GitTraveler --repo "<path_to_repo>" --filters "author=<author>,message=<message string>"
 ```
 
 To fetch all entries containing the author <author> and the string <message string> in the commit message, only search 30 entries
 ```
-python gitmagic --repo "<path_to_repo>" --filters "author=<author>,message=<message string>" --stopcondition "limit=30"
+python GitTraveler --repo "<path_to_repo>" --filters "author=<author>,message=<message string>" --stopcondition "limit=30"
 ```
   
 ### Importing as Python Module
@@ -93,8 +93,8 @@ Filters and stop conditions are dictionaries in this mode.
 
 First you will need to import this module
 ```
-from GitMagic.gitmagic import GitMagicCore
-gm = GitMagicCore
+from GitTraveler.GitTraveler import GitTravelerCore
+gm = GitTravelerCore
 ```
 
 #### Examples
