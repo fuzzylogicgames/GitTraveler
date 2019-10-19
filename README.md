@@ -24,19 +24,6 @@ GitTraveler runs a series of git commands against any repository and aggrigates 
 			'type': 'commit'
 		}],
 		'orphan': False
-	},
-	{
-		'hash': 'f236fa393a5b1bac51b1667471f542b5e05399f0',
-		'message': 'adding db',
-		'date': '2019-09-06 21:09:25 -0700',
-		'author': 'author',
-		'author_email': 'author@gmail.com',
-		'branches': ['hotfix/bug-1234', 'master'],
-		'tags': [{
-		'commit_hash': 'f236fa393a5b1bac51b1667471f542b5e05399f0',
-		'tag': 'annotated-tag-1.0',
-		'ref': 'refs/tags/annotated-tag-1.0',
-		'type': 'annotated'
 	}
 ]
 ```
@@ -75,17 +62,17 @@ GitTraveler provides conditions that will stop a search operation, currently sup
 #### Examples
 To fetch entire git log:
 ```
-python GitTraveler --repo "<path_to_repo>"
+python traveler --repo "<path_to_repo>"
 ```
 
 To fetch all entries containing the author <author> and the string <message string> in the commit message
 ```
-python GitTraveler --repo "<path_to_repo>" --filters "author=<author>,message=<message string>"
+python traveler --repo "<path_to_repo>" --filters "author=<author>,message=<message string>"
 ```
 
 To fetch all entries containing the author <author> and the string <message string> in the commit message, only search 30 entries
 ```
-python GitTraveler --repo "<path_to_repo>" --filters "author=<author>,message=<message string>" --stopcondition "limit=30"
+python traveler --repo "<path_to_repo>" --filters "author=<author>,message=<message string>" --stopcondition "limit=30"
 ```
   
 ### Importing as Python Module

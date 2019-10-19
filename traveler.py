@@ -1,6 +1,6 @@
 import os, sys, subprocess, json, argparse, re, datetime
 
-class GitMagicCore(object):
+class GitTraveler(object):
 
 	__appLocalDirectory = os.path.abspath(os.path.dirname(__file__))
 	
@@ -184,7 +184,7 @@ if __name__ == "__main__":
 	parser.add_argument('-s', '--stopcondition', type=str, help='Condition used to limit the number of entries searched')
 	args = parser.parse_args()
 
-	gm = GitMagicCore()
+	gm = GitTraveler()
 	result = gm.Walk(args.repo, args.filters, args.stopcondition)
 	print(result, flush=True)
 
