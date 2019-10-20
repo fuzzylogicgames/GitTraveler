@@ -1,7 +1,7 @@
 # GitTraveler
 GitTraveler aims to create more useable data when working with git. This allows developers to get more done and run less commands to find the data they need.
 
-GitTraveler runs a series of git commands against any repository and aggrigates that branch, tag and commit data into a single JSON formatted array. Sample below:
+GitTraveler runs a series of git commands against any repository and aggrigates branch, tag and commit data into a single JSON formatted array. Sample below:
 
 ```
 [
@@ -28,7 +28,7 @@ GitTraveler runs a series of git commands against any repository and aggrigates 
 ]
 ```
 
-The result will contain all tags (annotated and lightweight) on a commit, all branches the commit exists on as well as author, date and message information.
+The result will contain all tags (annotated and lightweight) attached to a commit, all branches the commit exists on as well as author, date and message information.
 
 All results are "queryable" with GitTraveler's filtering system, every property is a field that can be filtered, allowing you to perform complex searches and only return the data you need.
 
@@ -40,7 +40,7 @@ GitTraveler uses native python, no external libraries required.
 ## Using GitTraveler
 
 #### Filters
-GitTraveler provides a variety of filters to tailor your git log results to fit the specific need. CLI filters and stop conditions are comma separated key value pairs.
+GitTraveler provides a variety of filters to tailor your git log results to your specific needs. CLI filters and stop conditions are comma separated key value pairs.
 
 ##### Available Filters
 - branch (string): Name of branch, all results will only exist on this branch.
